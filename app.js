@@ -1,26 +1,39 @@
-var express = require('express');
-var app = express();
+// var http = require('http')
+// var fs = require('fs')
+// http.createServer(function(req, res){
+// 	res.writeHead(200, {'content-type': "text/html"})
+// 	var html = fs.readFileSync('Home.html')
+//     //var css = fs.readFileSync('Home.css')
+// 	res.end(html)
+//     //res.end(css)
+// }).listen(3000)
+// console.log('here');
 
-app.use('/', function(req, res, next){
-		console.log('Request Url:' + req.url);
-		next()
-});
+var http = require('http')
+var fs = require('fs')
 
-app.get('/', function(req, res) {
-    //“http://localhost:3000/assets/style.css”
-	res.send('<html><head><link href=assets/style.css type=text/css rel=stylesheet /></head><body><h1>Hello world!</h1></body></html>');
-});
-app.use('/assets', express.static(__dirname + '/public'));
+http.createServer(function (req, res) {
 
-app.set('view engine', 'ejs');
-
-app.use('/', function (req, res, next) {
-	console.log('Request Url:' + req.url);
-	next();
-});
-
-app.get('/', function(req, res) {
-	res.render('Home');
-});
-
-app.listen(3000);
+	if (req.url === '/') {
+		res.writeHead(200, { 'content-type': "text/html" })
+		var html = fs.readFileSync('Home.html')
+		res.write(html)
+	}
+	else if (req.url === '/Login') {
+		var Login = fs.readFileSync('Login.html')
+		res.write(Login)
+	}
+	else if (req.url === '/SinUp') {
+		var SinUp = fs.readFileSync('SinUp.html')
+		res.write(SinUp)
+	}
+	else if (req.url === '/Profile') {
+		var Profile = fs.readFileSync('Profile.html')
+		res.write(Profile)
+	}
+	else {
+		res.writeHead(404)
+		res.write('error page not found!')
+	}
+	res.end()
+}).listen(3000)
