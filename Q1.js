@@ -1,19 +1,22 @@
-var sum= function sum(a,b){
-   
-    return a+b;
+var EventEmitter = require('events');
+var util = require('util');
+
+function SayHello() {
+    this.Greeting = 'Hello';
 }
 
-var sub= function sub(a,b){
-    return a-b;
+util.inherits(SayHello, EventEmitter);
+
+SayHello.prototype.Greet = function (name, data) {
+    console.log(this.Greeting);
+    console.log(name);
+    this.emit('Greet', data);
 }
 
-var multi= function multi(a,b){
-  
-    return a*b;
-}
+var Greetr = new SayHello();
 
-module.exports={
-    sum:sum,
-    sub:sub,
-    multi:multi
-};
+Greetr.on('Greet', function (data) {
+    console.log('From ' + data );
+})
+
+Greetr.Greet('Alaa', 'ITI');

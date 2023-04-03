@@ -1,11 +1,11 @@
-var getAge=function(name,birthDate){
-    const currentDate=new Date();
-    const year=currentDate.getFullYear()-birthDate.getFullYear();
-   
+var readline =require('readline');
+var fs= require('fs');
 
-    return `Welcome ${name},Your age is:${year}`;
-}
+var r1=readline.createInterface({
+    input:fs.createReadStream(`data.json`),
+    crlfDelay:Infinity
+});
 
-module.exports={
-   getAge:getAge
-};
+r1.on('line',(line) => {
+    console.log(line);
+});
