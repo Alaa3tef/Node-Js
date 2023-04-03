@@ -1,39 +1,79 @@
-// var http = require('http')
-// var fs = require('fs')
-// http.createServer(function(req, res){
-// 	res.writeHead(200, {'content-type': "text/html"})
-// 	var html = fs.readFileSync('Home.html')
-//     //var css = fs.readFileSync('Home.css')
-// 	res.end(html)
-//     //res.end(css)
-// }).listen(3000)
-// console.log('here');
+var express = require('express');
+var fs = require('fs');
+const { TLSSocket } = require('tls');
 
-var http = require('http')
-var fs = require('fs')
+var app = express();
 
-http.createServer(function (req, res) {
+app.get('/login', function (req, res) {
+   res.writeHead(201, { 'content-type': "text/html" })
+   var html = fs.readFileSync('login.html')
+   res.write(html);
+   const userName = req.query.username;
+   const Email = req.query.email;
+   const Password = req.query.pass;
+   const w = {
+      'userName': userName,
+      'Email': Email,
+      'Password': Password
+   };
+   var json = JSON.stringify(w);
+   fs.writeFile('data.json', json, (err) => {
+      if (err) throw err;
+      else {
+         console.log("data added in JSON successfully in the info.text ")
+      }
+   });
 
-	if (req.url === '/') {
-		res.writeHead(200, { 'content-type': "text/html" })
-		var html = fs.readFileSync('Home.html')
-		res.write(html)
-	}
-	else if (req.url === '/Login') {
-		var Login = fs.readFileSync('Login.html')
-		res.write(Login)
-	}
-	else if (req.url === '/SinUp') {
-		var SinUp = fs.readFileSync('SinUp.html')
-		res.write(SinUp)
-	}
-	else if (req.url === '/Profile') {
-		var Profile = fs.readFileSync('Profile.html')
-		res.write(Profile)
-	}
-	else {
-		res.writeHead(404)
-		res.write('error page not found!')
-	}
-	res.end()
-}).listen(3000)
+
+
+});
+
+
+
+app.get('/profile', function (req, res) {
+
+   const Email = req.query.email;
+   const Password = req.query.pass;
+   fs.readFile("data.json", "utf8", (err, data) => {
+      if (err) {
+         console.log("File read failed:", err);
+         return;
+      }
+      else {
+         var t = JSON.parse(data);
+         console.log("File data:   " + t.Email + " " + t.Password);
+         console.log("login data:   " + Email + " " + Password);
+         if (t.Email == Email && t.Password != Password) {
+            res.writeHead(400, { 'content-type': "text/html" })
+            res.write('<html><head></head><body><h1>Error 400<h1/><h3>You Entered Wrong Password</h3></body></html>')
+         }
+         else if (t.Email != Email && t.Password == Password) {
+            res.writeHead(400, { 'content-type': "text/html" })
+            res.write('<html><head></head><body><h1>Error 400<h1/><h3>You Entered Wrong Email</h3></body></html>')
+         }
+         else if (t.Email != Email && t.Password != Password) {
+            res.writeHead(400, { 'content-type': "text/html" })
+            res.write('<html><head></head><body><h1>Error 400<h1/><h3>you entered email does not exist please signup</h3></body></html>')
+         }
+         else {
+            res.send('<html><head></head><body><h1>profile<h1/><h3>Hello: ' + t.userName + '</h3></body></html>');
+         }
+      }
+
+   });
+
+});
+
+
+
+app.get('/signup', function (req, res) {
+   res.writeHead(201, { 'content-type': "text/html" })
+   var html = fs.readFileSync('signup.html')
+   res.write(html);
+
+});
+
+
+
+
+app.listen(3000);
